@@ -8,6 +8,10 @@ public class CardManager : MonoBehaviour
     public Card[] cardArray; // ScriptableObject の配列で管理
     public Sprite defaultCardImage; // デフォルト画像
 
+    void Start(){
+        Load_saveCards();
+    }
+
     public void LoadCards()
     {
         #if UNITY_EDITOR
@@ -121,10 +125,52 @@ public class CardManager : MonoBehaviour
             }
 
             Debug.Log("Cards loaded successfully.");
+            SaveCards();
         }
         catch (System.Exception e)
         {
             Debug.LogError($"Error parsing card settings: {e.Message}");
+        }
+    }
+
+    // カードデータを保存
+    public void SaveCards()
+    {
+        foreach (var card in cardArray)
+        {
+            // Sprite のパスを保存する
+            if (card.illustration != null)
+            {
+                card.illustrationPath = card.illustration.name;  // Resources フォルダにある場合はファイル名
+            }
+        }
+
+        string json = JsonConvert.SerializeObject(cardArray);  // カードリストをJSONに変換
+        PlayerPrefs.SetString("CardData", json);  // PlayerPrefs に保存
+        PlayerPrefs.Save();
+    }
+    // カードデータを読み込む
+    public void Load_saveCards()
+    {
+        if (PlayerPrefs.HasKey("CardData"))
+        {
+            string json = PlayerPrefs.GetString("CardData");
+            cardArray = JsonConvert.DeserializeObject<List<Card>>(json).ToArray();
+
+            foreach (var card in cardArray)
+            {
+                // 画像パスから Sprite を再読み込み
+                if (!string.IsNullOrEmpty(card.illustrationPath))
+                {
+                    card.illustration = Resources.Load<Sprite>("Image/" + card.illustrationPath);  // 画像が Resources フォルダにあると仮定
+                }
+            }
+
+            Debug.Log("Cards loaded successfully");
+        }
+        else
+        {
+            Debug.LogWarning("No saved card data found.");
         }
     }
 }

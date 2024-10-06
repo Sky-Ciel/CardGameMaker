@@ -1,16 +1,54 @@
 using System;
 using System.IO;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class GameSettings : MonoBehaviour
 {
-    public int lifePoints;
-    public int deckSize;
-    public string[] turnProgress;
-    public int fieldLimit;
-    public bool noTargetSelection;
-    public bool freeSummon;
-    public int maxCopiesPerCard; // 同名カードの上限枚数
+    GS gs;
+
+    void Start()
+    {
+        // gs が null かどうか確認し、null ならインスタンス化する
+        if (gs == null)
+        {
+            gs = ScriptableObject.CreateInstance<GS>();
+        }
+
+        LoadGS();
+    }
+
+    // GameSettings を保存する関数
+    public void SaveGS()
+    {
+        if (gs != null)
+        {
+            PlayerPrefsUtility.SaveScriptableObject("GameSetting", gs);
+            PlayerPrefs.Save();
+            Debug.Log("Game settings saved.");
+        }
+        else
+        {
+            Debug.LogError("GameSetting (gs) is null. Cannot save settings.");
+        }
+    }
+
+    // GameSettings をロードする関数
+    public void LoadGS()
+    {
+        gs = PlayerPrefsUtility.LoadScriptableObject<GS>("GameSetting");
+        
+        // インスタンスがロードされなかった場合、初期化する
+        if (gs == null)
+        {
+            gs = ScriptableObject.CreateInstance<GS>();
+            Debug.Log("Game settings initialized as new.");
+        }
+        else
+        {
+            Debug.Log("Game settings loaded from PlayerPrefs.");
+        }
+    }
 
     public void LoadGameSettings()
     {
@@ -55,33 +93,33 @@ public class GameSettings : MonoBehaviour
                 if (line.Contains("inLife"))
                 {
                     string lifeString = line.Split(':')[1].Trim();
-                    lifePoints = int.Parse(lifeString);
+                    gs.lifePoints = int.Parse(lifeString);
                 }
                 else if (line.Contains("miDeck"))
                 {
                     string deckString = line.Split(':')[1].Trim();
-                    deckSize = int.Parse(deckString);
+                    gs.deckSize = int.Parse(deckString);
                 }
                 else if (line.Contains("TurnProgress"))
                 {
-                    turnProgress = line.Split(':')[1].Trim(new char[] { '[', ']', ' ' }).Split(',');
+                    gs.turnProgress = line.Split(':')[1].Trim(new char[] { '[', ']', ' ' }).Split(',');
                 }
                 else if (line.Contains("FieldLimit"))
                 {
                     string fieldLimitString = line.Split(':')[1].Trim();
-                    fieldLimit = int.Parse(fieldLimitString);
+                    gs.fieldLimit = int.Parse(fieldLimitString);
                 }
                 else if (line.Contains("NoTargetSelection"))
                 {
-                    noTargetSelection = line.Contains("T");
+                    gs.noTargetSelection = line.Contains("T");
                 }
                 else if (line.Contains("FreeSummon"))
                 {
-                    freeSummon = line.Contains("T");
+                    gs.freeSummon = line.Contains("T");
                 }
                 else if (line.Contains("maxCopiesPerCard"))
                 {
-                    maxCopiesPerCard = int.Parse(line.Split(':')[1].Trim());
+                    gs.maxCopiesPerCard = int.Parse(line.Split(':')[1].Trim());
                 }
             }
             catch (FormatException e)
@@ -91,5 +129,6 @@ public class GameSettings : MonoBehaviour
         }
 
         Debug.Log("Game settings loaded successfully.");
+        SaveGS();
     }
 }

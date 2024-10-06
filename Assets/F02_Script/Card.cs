@@ -7,9 +7,13 @@ public class Card : ScriptableObject
 {
     public string cardName; // カード名
     public CardType cardType; // カードの種類（列挙型）
-    public Sprite illustration; // カードイラスト
+    public string illustrationPath; // カードイラストのパス
     public int cost; // コスト
     public CardEffect effect; // 効果
+
+    // 保存しないプロパティ
+    [System.NonSerialized]
+    public Sprite illustration;  // Sprite はシリアライズしない
 }
 
 public enum TriggerEvent
