@@ -78,11 +78,12 @@ public class CardManager : MonoBehaviour
                     card.effect.removeEffects = new List<RemoveEffect> { data.effect.remove };
 
                     // Remove 効果内の TargetCondition のパース
-                    card.effect.removeEffects[0].target_condition.location = 
-                        (LocationType)System.Enum.Parse(typeof(LocationType), data.effect.remove.target_condition.location, true);
+                    card.effect.removeEffects[0].target_condition.location = data.effect.remove.target_condition.location;
+                        //(LocationType)System.Enum.Parse(typeof(LocationType), data.effect.remove.target_condition.location, true);
 
-                    card.effect.removeEffects[0].target_condition.type = 
-                        (CardType)System.Enum.Parse(typeof(CardType), data.effect.remove.target_condition.type, true);
+                    card.effect.removeEffects[0].target_condition.type = data.effect.remove.target_condition.type;
+                        //(CardType)System.Enum.Parse(typeof(CardType), data.effect.remove.target_condition.type, true);
+
                 }
 
                 // Temporary Buff 効果が存在する場合
