@@ -6,6 +6,12 @@ using System.Collections.Generic;
 public class Card : ScriptableObject
 {
     public string cardName; // カード名
+    public int Atk;
+    public int Def;
+    public int Rank;
+    public int Rarity;
+    public string Race; // 種族名
+    public Element element;
     public CardType cardType; // カードの種類（列挙型）
     public string illustrationPath; // カードイラストのパス
     public int cost; // コスト
@@ -14,6 +20,16 @@ public class Card : ScriptableObject
     // 保存しないプロパティ
     [System.NonSerialized]
     public Sprite illustration;  // Sprite はシリアライズしない
+}
+
+public enum Element
+{
+    Fire,
+    Water,
+    Earth,
+    Air,
+    Light,
+    Dark
 }
 
 public enum TriggerEvent

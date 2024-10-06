@@ -36,7 +36,7 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         draggingCard.GetComponent<CanvasGroup>().blocksRaycasts = false;  // Raycast を無効化
 
         // 見た目を少し変更してわかりやすくする（オプション）
-        draggingCard.GetComponent<Image>().color = new Color(1, 1, 1, 0.7f);
+        //draggingCard.GetComponent<Image>().color = new Color(1, 1, 1, 0.7f);
     }
 
     // ドラッグ中の処理
