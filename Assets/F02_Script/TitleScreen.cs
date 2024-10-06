@@ -8,6 +8,7 @@ public class TitleScreen : MonoBehaviour
     public GameSettings gameSettings;
     public CardManager cardManager;
 
+    [Header("------ フェード ------")]
     public CanvasGroup fadeElement; // フェードさせる要素
     public GameObject fade;
 
@@ -50,7 +51,7 @@ public class TitleScreen : MonoBehaviour
     public void GoToDeckBuilding(bool yes)
     {
         if(yes){
-            SceneManager.LoadScene("DeckBuildingScene");
+            SceneManager.LoadScene("DeckBuild");
         }else{
             window_d.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad); // 1秒で降りる
             fade.SetActive(false);

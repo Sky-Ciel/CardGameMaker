@@ -1,7 +1,7 @@
 {
     "cards": [
         {
-            "name": "Warrior",
+            "name": "戦士",
             "type": "Unit",
             "illust": "warrior.png",
             "cost": 3,
@@ -14,7 +14,7 @@
             }
         },
         {
-            "name": "Fireball",
+            "name": "火炎の球",
             "type": "Magic",
             "illust": "fireball.png",
             "cost": 4,
@@ -26,7 +26,7 @@
             }
         },
         {
-            "name": "Shield",
+            "name": "癒しの盾",
             "type": "Trap",
             "illust": "shield.png",
             "cost": 2,
@@ -42,7 +42,7 @@
             "type": "Magic",
             "effect": {
                 "draw": {
-                    "draw": 500,
+                    "draw": 3,
                     "trigger": "play"
                 }
             }
