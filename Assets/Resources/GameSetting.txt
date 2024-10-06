@@ -1,0 +1,13 @@
+### inLife: ライフの初期値
+### miDeck: デッキ下限枚数
+### turn_phase_order: ゲームのフェイズ進行を定義
+### atkTargetFree: ユニット攻撃時に攻撃対象を自由に選べるか
+### noCostPlay: コストを使わずにカードを出せるか
+
+inLife: 4000
+miDeck: 40
+TurnProgress: [StandbyPhase, DrawPhase, ChargePhase, MainPhase, BattlePhase, EndPhase]
+FieldLimit: 5
+NoTargetSelection: T
+FreeSummon: T
+maxCopiesPerCard: 3

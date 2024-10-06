@@ -1,0 +1,51 @@
+{
+    "cards": [
+        {
+            "name": "Warrior",
+            "type": "Unit",
+            "illust": "warrior.png",
+            "cost": 3,
+            "effect": {
+                "buff_atk": {
+                    "value": 200,
+                    "target": 1,
+                    "trigger": "attack"
+                }
+            }
+        },
+        {
+            "name": "Fireball",
+            "type": "Magic",
+            "illust": "fireball.png",
+            "cost": 4,
+            "effect": {
+                "draw": {
+                    "draw": 1,
+                    "trigger": "play"
+                }
+            }
+        },
+        {
+            "name": "Shield",
+            "type": "Trap",
+            "illust": "shield.png",
+            "cost": 2,
+            "effect": {
+                "heal": {
+                    "heal": 500,
+                    "trigger": "play"
+                }
+            }
+        },
+        {
+            "name": "天使の施し",
+            "type": "Magic",
+            "effect": {
+                "draw": {
+                    "draw": 500,
+                    "trigger": "play"
+                }
+            }
+        }
+    ]
+}
