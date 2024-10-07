@@ -121,6 +121,10 @@ public class GameSettings : MonoBehaviour
                 {
                     gs.maxCopiesPerCard = int.Parse(line.Split(':')[1].Trim());
                 }
+                else if (line.Contains("NoRace"))
+                {
+                    gs.NoRace = line.Contains("T");
+                }
             }
             catch (FormatException e)
             {

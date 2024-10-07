@@ -5,15 +5,18 @@ using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
-    public Card[] cardArray; // ScriptableObject の配列で管理
     public Sprite defaultCardImage; // デフォルト画像
+    public List<Card> cardList = new List<Card>();
 
-    void Start(){
-        Load_saveCards();
+    void Start()
+    {
+        LoadCards();  // カードのロードを呼び出し
     }
 
     public void LoadCards()
     {
+        cardList = new List<Card>();
+
         #if UNITY_EDITOR
         TextAsset cardSettingText = Resources.Load<TextAsset>("CardSetting");
         if (cardSettingText != null)
@@ -22,10 +25,10 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("CardSetting.txt not found in Resources.");
+            Debug.LogError("CardSetting.json not found in Resources.");
         }
         #else
-        string filePath = Path.Combine(Application.dataPath, "../CardSetting.txt");
+        string filePath = Path.Combine(Application.dataPath, "../CardSetting.json");
         if (File.Exists(filePath))
         {
             string fileContent = File.ReadAllText(filePath);
@@ -33,7 +36,7 @@ public class CardManager : MonoBehaviour
         }
         else
         {
-            Debug.LogError("CardSetting.txt not found in application folder.");
+            Debug.LogError("CardSetting.json not found in application folder.");
         }
         #endif
     }
@@ -42,86 +45,99 @@ public class CardManager : MonoBehaviour
     {
         try
         {
-            CardDataArray cardDataArray = JsonConvert.DeserializeObject<CardDataArray>(content);
-
-            cardArray = new Card[cardDataArray.cards.Length];
-
-            for (int i = 0; i < cardDataArray.cards.Length; i++)
+            CardSettingDataArray cardSettings = JsonConvert.DeserializeObject<CardSettingDataArray>(content);
+            foreach (var cardSetting in cardSettings.cards)
             {
-                CardData data = cardDataArray.cards[i];
-                Card card = ScriptableObject.CreateInstance<Card>();
-
-                card.cardName = data.name;
-                card.cardType = (CardType)System.Enum.Parse(typeof(CardType), data.type, true); // 列挙型にパース
-                card.cost = data.cost;
-
-                // 効果のパース
-                card.effect = new CardEffect();
-                
-                // Heal 効果が存在する場合
-                if (data.effect.heal != null)
+                Card newCard = new Card
                 {
-                    card.effect.healEffects = new List<HealEffect> { data.effect.heal };
-                }
+                    cardName = !string.IsNullOrEmpty(cardSetting.name) ? cardSetting.name : "Unknown Card",
+                    Atk = cardSetting.atk != 0 ? cardSetting.atk : 0,
+                    Def = cardSetting.def != 0 ? cardSetting.def : 0,
+                    Rank = cardSetting.rank != 0 ? cardSetting.rank : 1,
+                    Rarity = cardSetting.rarity != 0 ? cardSetting.rarity : 1,
+                    Race = !string.IsNullOrEmpty(cardSetting.race) ? cardSetting.race : "Unknown Race",
+                    element = cardSetting.element != null ? cardSetting.element : Element.Earth,
+                    cardType = cardSetting.type != null ? cardSetting.type : CardType.Unit,
+                    illustrationPath = !string.IsNullOrEmpty(cardSetting.illust) ? cardSetting.illust : "defaultPath",
+                    cost = cardSetting.cost != 0 ? cardSetting.cost : 1,
+                    effect = new CardEffect() // 初期値を空の CardEffect に
+                };
 
-                // Draw 効果が存在する場合
-                if (data.effect.draw != null)
+                // 効果の読み込み
+                if (cardSetting.effect != null)
                 {
-                    card.effect.drawEffects = new List<DrawEffect> { data.effect.draw };
-                }
+                    // Heal 効果が存在する場合
+                    if (cardSetting.effect.Heal != null)
+                    {
+                        newCard.effect.healEffects = new List<HealEffect>
+                        {
+                            new HealEffect
+                            {
+                                heal = cardSetting.effect.Heal.heal,  // 回復量を設定
+                                trigger = cardSetting.effect.Heal.trigger  // トリガーイベントを設定
+                            }
+                        };
+                    }
 
-                // BuffAtk 効果が存在する場合
-                if (data.effect.buff_atk != null)
-                {
-                    card.effect.buffAtkEffects = new List<BuffAtkEffect> { data.effect.buff_atk };
-                }
+                    // Draw 効果が存在する場合
+                    if (cardSetting.effect.Draw != null)
+                    {
+                        //newCard.effect.drawEffects = new List<DrawEffect> { cardSetting.effect.draw };
+                        newCard.effect.drawEffects = new List<DrawEffect>
+                        {
+                            new DrawEffect
+                            {
+                                draw = cardSetting.effect.Draw.draw,  // 回復量を設定
+                                trigger = cardSetting.effect.Draw.trigger  // トリガーイベントを設定
+                            }
+                        };
+                    }
 
-                // Remove 効果が存在する場合
-                if (data.effect.remove != null)
-                {
-                    card.effect.removeEffects = new List<RemoveEffect> { data.effect.remove };
+                    // BuffAtk 効果が存在する場合
+                    if (cardSetting.effect.buff_atk != null)
+                    {
+                        newCard.effect.buffAtkEffects = new List<BuffAtkEffect> { cardSetting.effect.buff_atk };
+                    }
 
-                    // Remove 効果内の TargetCondition のパース
-                    card.effect.removeEffects[0].target_condition.location = data.effect.remove.target_condition.location;
-                        //(LocationType)System.Enum.Parse(typeof(LocationType), data.effect.remove.target_condition.location, true);
+                    // Remove 効果が存在する場合
+                    if (cardSetting.effect.remove != null)
+                    {
+                        newCard.effect.removeEffects = new List<RemoveEffect> { cardSetting.effect.remove };
+                        newCard.effect.removeEffects[0].target_condition.location = cardSetting.effect.remove.target_condition.location;
+                        newCard.effect.removeEffects[0].target_condition.type = cardSetting.effect.remove.target_condition.type;
+                    }
 
-                    card.effect.removeEffects[0].target_condition.type = data.effect.remove.target_condition.type;
-                        //(CardType)System.Enum.Parse(typeof(CardType), data.effect.remove.target_condition.type, true);
-
-                }
-
-                // Temporary Buff 効果が存在する場合
-                if (data.effect.temporary_buff != null)
-                {
-                    card.effect.temporaryBuffEffects = new List<TemporaryBuffEffect> { data.effect.temporary_buff };
+                    // Temporary Buff 効果が存在する場合
+                    if (cardSetting.effect.temporary_buff != null)
+                    {
+                        newCard.effect.temporaryBuffEffects = new List<TemporaryBuffEffect> { cardSetting.effect.temporary_buff };
+                    }
                 }
 
                 // 画像の読み込み
                 #if UNITY_EDITOR
-                card.illustration = Resources.Load<Sprite>("Image/" + data.illust);
-                if (card.illustration == null)
+                newCard.illustration = Resources.Load<Sprite>("Image/" + cardSetting.illust);
+                if (newCard.illustration == null)
                 {
-                    // 画像が存在しない場合はデフォルト画像を使用
-                    card.illustration = defaultCardImage;
+                    newCard.illustration = defaultCardImage;  // デフォルト画像を使用
                 }
                 #else
-                string imagePath = Path.Combine(Application.dataPath, "../Image/", data.illust);
+                string imagePath = Path.Combine(Application.dataPath, "../Image/", cardSetting.illust);
                 if (File.Exists(imagePath))
                 {
                     byte[] imageBytes = File.ReadAllBytes(imagePath);
                     Texture2D texture = new Texture2D(2, 2);
                     texture.LoadImage(imageBytes);
-                    card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    newCard.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                 }
                 else
                 {
-                    // 画像が存在しない場合はデフォルト画像を使用
-                    card.illustration = defaultCardImage;
+                    newCard.illustration = defaultCardImage;  // デフォルト画像を使用
                 }
                 #endif
 
-                // カードを配列に追加
-                cardArray[i] = card;
+                // カードをリストに追加
+                cardList.Add(newCard);
             }
 
             Debug.Log("Cards loaded successfully.");
@@ -136,7 +152,7 @@ public class CardManager : MonoBehaviour
     // カードデータを保存
     public void SaveCards()
     {
-        foreach (var card in cardArray)
+        foreach (var card in cardList)
         {
             // Sprite のパスを保存する
             if (card.illustration != null)
@@ -145,19 +161,20 @@ public class CardManager : MonoBehaviour
             }
         }
 
-        string json = JsonConvert.SerializeObject(cardArray);  // カードリストをJSONに変換
+        string json = JsonConvert.SerializeObject(cardList);  // カードリストをJSONに変換
         PlayerPrefs.SetString("CardData", json);  // PlayerPrefs に保存
         PlayerPrefs.Save();
     }
+
     // カードデータを読み込む
     public void Load_saveCards()
     {
         if (PlayerPrefs.HasKey("CardData"))
         {
             string json = PlayerPrefs.GetString("CardData");
-            cardArray = JsonConvert.DeserializeObject<List<Card>>(json).ToArray();
+            cardList = JsonConvert.DeserializeObject<List<Card>>(json);
 
-            foreach (var card in cardArray)
+            foreach (var card in cardList)
             {
                 // 画像パスから Sprite を再読み込み
                 if (!string.IsNullOrEmpty(card.illustrationPath))
@@ -175,28 +192,36 @@ public class CardManager : MonoBehaviour
     }
 }
 
+// カードの設定を保持するクラス
 [System.Serializable]
-public class CardData
+public class CardSettingData
 {
-    public string name;
-    public string type;
-    public string illust;
-    public int cost;
+    public string name;  // カード名
+    public int atk;  // 攻撃力
+    public int def;  // 守備力
+    public int rank;  // ランク
+    public int rarity;  // レア度
+    public string race;  // 種族
+    public Element element;  // 属性
+    public CardType type;  // カードの種類
+    public string illust;  // イラストのパス
+    public int cost;  // コスト
     public CardEffectData effect; // 効果を保持するクラス
 }
 
+// カードの設定データを持つ配列
 [System.Serializable]
-public class CardDataArray
+public class CardSettingDataArray
 {
-    public CardData[] cards;
+    public CardSettingData[] cards;  // カード設定のリスト
 }
 
 [System.Serializable]
 public class CardEffectData
 {
-    public HealEffect heal;
-    public DrawEffect draw;
-    public BuffAtkEffect buff_atk;
-    public RemoveEffect remove;
-    public TemporaryBuffEffect temporary_buff;
+    public HealEffect Heal;  // Heal効果
+    public DrawEffect Draw;  // Draw効果
+    public BuffAtkEffect buff_atk;  // 攻撃力強化効果
+    public RemoveEffect remove;  // 除外効果
+    public TemporaryBuffEffect temporary_buff;  // 一時的強化効果
 }

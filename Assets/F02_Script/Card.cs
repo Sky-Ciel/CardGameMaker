@@ -6,10 +6,10 @@ using System.Collections.Generic;
 public class Card : ScriptableObject
 {
     public string cardName; // カード名
-    public int Atk;
-    public int Def;
-    public int Rank;
-    public int Rarity;
+    public int Atk; //攻撃
+    public int Def; //守備
+    public int Rank; //ランク
+    public int Rarity; //レア度
     public string Race; // 種族名
     public Element element;
     public CardType cardType; // カードの種類（列挙型）
@@ -24,12 +24,12 @@ public class Card : ScriptableObject
 
 public enum Element
 {
-    Fire,
-    Water,
-    Earth,
-    Air,
-    Light,
-    Dark
+    Fire, //赤枠
+    Water, //青枠
+    Earth, //茶枠
+    Air, //黄緑枠
+    Light, //黄色枠
+    Dark //黒紫枠
 }
 
 public enum TriggerEvent

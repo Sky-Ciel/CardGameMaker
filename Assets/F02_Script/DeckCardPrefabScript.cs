@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
+public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [Header("------ カード本体のパーツ ------")]
     public Card card;  // このプレハブが保持するカード情報
@@ -14,9 +14,10 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     public TextMeshProUGUI cardRaceText;  // 種族表示用テキスト
     public TextMeshProUGUI cardStatesText;  // 攻守表示用テキスト
 
-    private Transform parentBeforeDrag;  // ドラッグ前の親オブジェクト
     private CanvasGroup canvasGroup;
-    private GameObject draggingCard;  // ドラッグ時のコピーオブジェクト
+    private Vector3 startPosition;
+    private Transform parentBeforeDrag;
+    public DeckDropArea deckDropArea;  // デッキに対する参照を保持
 
     GS gs; //ゲーム設定
 
@@ -29,17 +30,13 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
-
-        if (gs == null)
-        {
-            gs = ScriptableObject.CreateInstance<GS>();
-        }
-        gs = PlayerPrefsUtility.LoadScriptableObject<GS>("GameSetting");
     }
 
     // カード情報を設定する
-    public void SetCardInfo(Card cardData)
+    public void SetCardInfo(Card cardData, DeckDropArea deckArea)
     {
+        deckDropArea = deckArea;  // デッキへの参照を保存
+
         card = cardData;
         cardNameText.text = card.cardName;
         cardCostText.text = card.cost.ToString();
@@ -92,26 +89,32 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     // ドラッグを開始したとき
     public void OnBeginDrag(PointerEventData eventData)
     {
+        startPosition = transform.position;
         parentBeforeDrag = transform.parent;
-        
-        // ドラッグ用のコピーを作成
-        draggingCard = Instantiate(gameObject, transform.root);
-        draggingCard.GetComponent<CanvasGroup>().blocksRaycasts = false;  // Raycast を無効化
-
-        // 見た目を少し変更してわかりやすくする（オプション）
-        //draggingCard.GetComponent<Image>().color = new Color(1, 1, 1, 0.7f);
+        transform.SetParent(transform.root);  // 親を一時的に変更
+        canvasGroup.blocksRaycasts = false;   // Raycast を無効化
     }
 
     // ドラッグ中の処理
     public void OnDrag(PointerEventData eventData)
     {
-        // ドラッグ中のカードの位置をマウスに追従
-        draggingCard.transform.position = Input.mousePosition;
+        transform.position = Input.mousePosition;  // マウスに追従
     }
 
     // ドラッグ終了時
     public void OnEndDrag(PointerEventData eventData)
     {
-        Destroy(draggingCard);  // ドラッグ用のコピーを削除
+        if (!RectTransformUtility.RectangleContainsScreenPoint(parentBeforeDrag.GetComponent<RectTransform>(), Input.mousePosition))
+        {
+            // デッキ外にドロップされた場合、デッキリストからカードを削除
+            deckDropArea.RemoveCardFromDeck(card);
+            Destroy(gameObject);  // ゲームオブジェクト自体も削除
+        }
+        else
+        {
+            transform.SetParent(parentBeforeDrag);  // 元の位置に戻す
+            transform.position = startPosition;
+        }
+        canvasGroup.blocksRaycasts = true;  // Raycast を再有効化
     }
 }

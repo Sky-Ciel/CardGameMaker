@@ -1,0 +1,85 @@
+{
+    "cards": [
+        {
+            "name": "火の精霊",
+            "type": "Unit",
+            "illust": "fire_spirit.png",
+            "cost": 4,
+            "atk": 1200,
+            "def": 800,
+            "rank": 2,
+            "rarity": 2,
+            "race": "精霊",
+            "element": "Fire",
+            "effect": {
+                "buff_atk": {
+                    "value": 300,
+                    "target": 1,
+                    "trigger": "attack"
+                }
+            }
+        },
+        {
+            "name": "守護の盾",
+            "type": "Trap",
+            "illust": "guardian_shield.png",
+            "cost": 2,
+            "effect": {
+                "temporary_buff": {
+                    "buff_type": "def",
+                    "value": 500,
+                    "duration": 2,
+                    "target": 1,
+                    "trigger": "play"
+                }
+            }
+        },
+        {
+            "name": "氷の矢",
+            "type": "Magic",
+            "illust": "ice_arrow.png",
+            "cost": 3,
+            "effect": {
+                "remove": {
+                    "DesTarget": 1,
+                    "target_condition": {
+                        "location": "OpponentField",
+                        "type": "Unit",
+                        "def_less_than": 1000
+                    },
+                    "trigger": "play"
+                }
+            }
+        },
+        {
+            "name": "地の巨人",
+            "type": "Unit",
+            "illust": "earth_giant.png",
+            "cost": 5,
+            "atk": 2500,
+            "def": 2000,
+            "rank": 3,
+            "rarity": 1,
+            "race": "巨人",
+            "element": "Earth",
+            "effect": {
+                "heal": {
+                    "heal": 10,
+                    "trigger": "end"
+                }
+            }
+        },
+        {
+            "name": "光の守り",
+            "type": "Magic",
+            "illust": "light_guardian.png",
+            "cost": 2,
+            "effect": {
+                "draw": {
+                    "draw": 1,
+                    "trigger": "play"
+                }
+            }
+        }
+    ]
+}
