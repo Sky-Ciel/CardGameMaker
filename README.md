@@ -1,4 +1,3 @@
-Here's a README compilation of the contents from the two files, preserving the Japanese text and variable names:
 
 # カードゲーム設定ガイド
 
