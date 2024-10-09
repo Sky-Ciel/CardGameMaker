@@ -2,10 +2,13 @@ using System;
 using System.IO;
 using UnityEngine;
 using Newtonsoft.Json;
+using TMPro;
 
 public class GameSettings : MonoBehaviour
 {
     GS gs;
+
+    public TMP_Text setting;
 
     void Start()
     {
@@ -16,6 +19,26 @@ public class GameSettings : MonoBehaviour
         }
 
         LoadGS();
+    }
+
+    void UpdateSettingText(){
+        string ss = "";
+        ss += $"初期ライフ: {gs.lifePoints}\n";
+        ss += $"デッキ最低枚数: {gs.deckSize}\n";
+        ss += $"同名カード: {gs.maxCopiesPerCard}枚まで\n";
+        ss += $"<ターン進行>\n";
+        foreach(var step in gs.turnProgress){
+            ss += $"    -{step}\n";
+        }
+        ss += $"フィールドの上限枚数: {gs.fieldLimit}\n";
+        var m = gs.noTargetSelection ? "不可" : "可";
+        ss += $"攻撃時のターゲット選択: {m}\n";
+        m = gs.freeSummon ? "なし" : "あり";
+        ss += $"コスト制: {m}\n";
+        m = gs.NoRace ? "なし" : "あり";
+        ss += $"種族の区別: {m}\n";
+    
+        setting.text = ss;
     }
 
     // GameSettings を保存する関数
@@ -31,6 +54,7 @@ public class GameSettings : MonoBehaviour
         {
             Debug.LogError("GameSetting (gs) is null. Cannot save settings.");
         }
+        UpdateSettingText();
     }
 
     // GameSettings をロードする関数
@@ -48,6 +72,7 @@ public class GameSettings : MonoBehaviour
         {
             Debug.Log("Game settings loaded from PlayerPrefs.");
         }
+        UpdateSettingText();
     }
 
     public void LoadGameSettings()

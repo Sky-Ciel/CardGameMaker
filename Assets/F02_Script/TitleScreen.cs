@@ -20,6 +20,9 @@ public class TitleScreen : MonoBehaviour
     public RectTransform window_d; // アニメーションさせるウィンドウ
     public Button programButton_d; // アニメーションさせるボタン
 
+    [Header("------ 設定表示ボタン ------")]
+    public RectTransform window_set; // アニメーションさせるウィンドウ
+
     void Start()
     {
         Debug.Log("Hello World");
@@ -27,6 +30,8 @@ public class TitleScreen : MonoBehaviour
         // ウィンドウの初期位置を保存（上の画面外から始めるためにYを大きくする）
         window.anchoredPosition = new Vector2(0, 1100); // 画面上部にウィンドウを移動
         window_d.anchoredPosition = new Vector2(0, 1100); // 画面上部にウィンドウを移動
+        window_set.anchoredPosition = new Vector2(0, 1100); // 画面上部にウィンドウを移動
+
         AnimateButton();
         fade.SetActive(false);
     }
@@ -65,6 +70,8 @@ public class TitleScreen : MonoBehaviour
     }
 
     //----------------- アニメーション -----------------
+
+    //　プログラム反映確認
     public void OnProgramButtonClick()
     {
         // ウィンドウが上からふわっと降りてくるアニメーション
@@ -73,6 +80,8 @@ public class TitleScreen : MonoBehaviour
         // フェードアニメーション
         fadeElement.DOFade(1f, 1f); // 1秒かけてフェードイン
     }
+
+    //　デッキ制作画面へ行きたい時
     public void OnDeckButtonClick()
     {
         // ウィンドウが上からふわっと降りてくるアニメーション
@@ -80,6 +89,21 @@ public class TitleScreen : MonoBehaviour
         fade.SetActive(true);
         // フェードアニメーション
         fadeElement.DOFade(1f, 1f); // 1秒かけてフェードイン
+    }
+
+    //　設定確認画面
+    public void OnSettingButtonClick(bool open)
+    {
+        if(open){
+            // ウィンドウが上からふわっと降りてくるアニメーション
+            window_set.DOAnchorPos(new Vector2(0,0), 0.7f).SetEase(Ease.OutQuad); // 1秒で降りる
+            fade.SetActive(true);
+            // フェードアニメーション
+            fadeElement.DOFade(1f, 1f); // 1秒かけてフェードイン
+        }else{
+            window_set.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad); // 1秒で降りる
+            fade.SetActive(false);
+        }
     }
 
     // ボタンのふわふわアニメーション
