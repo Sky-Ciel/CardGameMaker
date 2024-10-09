@@ -20,6 +20,123 @@ public class Card : ScriptableObject
     // 保存しないプロパティ
     [System.NonSerialized]
     public Sprite illustration;  // Sprite はシリアライズしない
+
+    public string GenerateEffectText()
+    {
+        List<string> effectTexts = new List<string>();
+
+        if (effect != null)
+        {
+            // Heal効果
+            if (effect.healEffects != null && effect.healEffects.Count > 0)
+            {
+                foreach (var healEffect in effect.healEffects)
+                {
+                    effectTexts.Add($"{GetTriggerText(healEffect.trigger)}、ライフを{healEffect.heal}回復する。");
+                }
+            }
+
+            // Draw効果
+            if (effect.drawEffects != null && effect.drawEffects.Count > 0)
+            {
+                foreach (var drawEffect in effect.drawEffects)
+                {
+                    effectTexts.Add($"{GetTriggerText(drawEffect.trigger)}、カードを{drawEffect.draw}枚引く。");
+                }
+            }
+
+            // BuffAtk効果
+            if (effect.buffAtkEffects != null && effect.buffAtkEffects.Count > 0)
+            {
+                foreach (var buffAtkEffect in effect.buffAtkEffects)
+                {
+                    effectTexts.Add($"{GetTriggerText(buffAtkEffect.trigger)}、{buffAtkEffect.target}体のユニットの攻撃力を{buffAtkEffect.value}上げる。");
+                }
+            }
+
+            // Remove効果
+            if (effect.removeEffects != null && effect.removeEffects.Count > 0)
+            {
+                foreach (var removeEffect in effect.removeEffects)
+                {
+                    string targetConditionText = GetTargetConditionText(removeEffect.target_condition);
+                    effectTexts.Add($"{GetTriggerText(removeEffect.trigger)}、{targetConditionText}から{removeEffect.DesTarget}体を除外する。");
+                }
+            }
+
+            // TemporaryBuff効果
+            if (effect.temporaryBuffEffects != null && effect.temporaryBuffEffects.Count > 0)
+            {
+                foreach (var tempBuffEffect in effect.temporaryBuffEffects)
+                {
+                    string buffTypeText = tempBuffEffect.buff_type == "atk" ? "攻撃力" : "守備力";
+                    effectTexts.Add($"{GetTriggerText(tempBuffEffect.trigger)}、{tempBuffEffect.target}体のユニットの{buffTypeText}を{tempBuffEffect.duration}ターンの間、{tempBuffEffect.value}上げる。");
+                }
+            }
+        }
+
+        return string.Join(" ", effectTexts);
+    }
+
+    private string GetTriggerText(TriggerEvent trigger)
+    {
+        switch (trigger)
+        {
+            case TriggerEvent.Play:
+                return "このカードをプレイした時";
+            case TriggerEvent.Attack:
+                return "このカードが攻撃する時";
+            case TriggerEvent.End:
+                return "ターン終了時";
+            default:
+                return "";
+        }
+    }
+
+    private string GetTargetConditionText(TargetCondition condition)
+    {
+        List<string> conditionTexts = new List<string>();
+
+        switch (condition.location)
+        {
+            case LocationType.OwnField:
+                conditionTexts.Add("自分のフィールド");
+                break;
+            case LocationType.OpponentField:
+                conditionTexts.Add("相手のフィールド");
+                break;
+            case LocationType.AllField:
+                conditionTexts.Add("全てのフィールド");
+                break;
+        }
+
+        if (condition.type != CardType.Unit)
+        {
+            conditionTexts.Add($"{condition.type}カード");
+        }
+
+        if (condition.atk_less_than > 0)
+        {
+            conditionTexts.Add($"攻撃力が{condition.atk_less_than}未満");
+        }
+
+        if (condition.atk_greater_than > 0)
+        {
+            conditionTexts.Add($"攻撃力が{condition.atk_greater_than}より大きい");
+        }
+
+        if (condition.def_less_than > 0)
+        {
+            conditionTexts.Add($"守備力が{condition.def_less_than}未満");
+        }
+
+        if (condition.def_greater_than > 0)
+        {
+            conditionTexts.Add($"守備力が{condition.def_greater_than}より大きい");
+        }
+
+        return string.Join("の", conditionTexts);
+    }
 }
 
 public enum Element

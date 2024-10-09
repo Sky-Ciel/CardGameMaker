@@ -25,6 +25,9 @@ public class DeckEditorManager : MonoBehaviour
     [Header("------ 編集終了ボタン ------")]
     public RectTransform window_back; // アニメーションさせるウィンドウ
 
+    [Header("------ ポップアップ カード詳細 ------")]
+    public GameObject popupInfo;
+
     void Start()
     {
         fade.SetActive(false);
@@ -50,7 +53,10 @@ public class DeckEditorManager : MonoBehaviour
             // CardPrefabScript にカード情報をセットする
             CardPrefabScript cardScript = cardObject.GetComponent<CardPrefabScript>();
             cardScript.SetCardInfo(card);
+            cardScript.popupPrefab = popupInfo;
         }
+
+        popupInfo.SetActive(false);
     }
 
     // 使用可能なカードをロードする関数（サンプル）

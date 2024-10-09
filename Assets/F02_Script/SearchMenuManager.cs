@@ -123,6 +123,7 @@ public class SearchMenuManager : MonoBehaviour
 
         // フィルタリングされたカードを表示
         DisplayFilteredCards(filteredCards);
+        CloseSearchMenu();
     }
 
     // フィルタリングされたカードを表示

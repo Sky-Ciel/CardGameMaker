@@ -2685,7 +2685,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a3d7389a22de4b9dad1d2d18e063a6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gs: {fileID: 11400000, guid: 8f01ad69b0e634d47ab9e7aec9ef9a4f, type: 2}
 --- !u!114 &1750348623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2698,8 +2697,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d575d5b6b7c684a9389d9e3f2d740625, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardArray: []
   defaultCardImage: {fileID: 21300000, guid: 1e7205de8ecb34f9c85d5bd4b1f0447f, type: 3}
+  cardList: []
 --- !u!1 &1770719206
 GameObject:
   m_ObjectHideFlags: 0
