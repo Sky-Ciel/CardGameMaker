@@ -17,7 +17,10 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
     private List<Card> deckCards = new List<Card>();  // デッキ内のカードリスト
 
     DeckDropArea thisScript;
-    
+
+    public DeckListDisplay deckListDisplay;  // デッキリスト表示
+    public CostDistributionGraph costDistributionGraph;  // コスト分布グラフ表示
+
     void Start()
     {
         thisScript = GetComponent<DeckDropArea>();
@@ -29,6 +32,14 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
         gs = PlayerPrefsUtility.LoadScriptableObject<GS>("GameSetting");
 
         maxCopiesPerCard = gs.maxCopiesPerCard;  // GameSettings から maxCopiesPerCard を取得
+
+        UpdateLists();
+    }
+
+    void UpdateLists(){
+        // デッキリストとコスト分布グラフを更新
+        deckListDisplay.UpdateDeckList(deckCards);
+        costDistributionGraph.UpdateCostDistribution(deckCards);
     }
 
     public void OnDrop(PointerEventData eventData)
@@ -54,6 +65,8 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
                 deckCards.Add(cardScript.card);
 
                 SortDeck();  // デッキ内のカードをソート
+
+                UpdateLists();
             }
         }
     }
@@ -63,6 +76,8 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
     {
         deckCards.Remove(card);  // デッキリストからカードを削除
         Debug.Log("Card removed from deck: " + card.cardName);
+
+        UpdateLists();
     }
 
     private int CountCardInDeck(Card card)

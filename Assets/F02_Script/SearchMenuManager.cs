@@ -48,6 +48,8 @@ public class SearchMenuManager : MonoBehaviour
 
     [Tooltip("カードの表示用プレハブ")]
     public GameObject cardPrefab;  // 検索結果に表示するカードプレハブ
+    [Header("------ ポップアップ カード詳細 ------")]
+    public GameObject popupInfo;
 
     private List<Card> availableCards;  // 検索対象の全カードリスト
     private List<int> selectedCosts = new List<int>();  // 選択されたコストリスト
@@ -141,6 +143,7 @@ public class SearchMenuManager : MonoBehaviour
             GameObject cardObject = Instantiate(cardPrefab, cardContent);
             CardPrefabScript cardScript = cardObject.GetComponent<CardPrefabScript>();
             cardScript.SetCardInfo(card);
+            cardScript.popupPrefab = popupInfo;
         }
     }
 
