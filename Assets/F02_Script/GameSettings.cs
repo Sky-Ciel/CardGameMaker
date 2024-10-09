@@ -1,7 +1,8 @@
 using System;
 using System.IO;
+using System.Collections.Generic; 
 using UnityEngine;
-using Newtonsoft.Json;
+using UnityEditor;
 using TMPro;
 
 public class GameSettings : MonoBehaviour
@@ -9,6 +10,11 @@ public class GameSettings : MonoBehaviour
     GS gs;
 
     public TMP_Text setting;
+
+    string path;
+    public TMP_Text pathText;
+
+    public bool isPath;
 
     void Start()
     {
@@ -19,15 +25,42 @@ public class GameSettings : MonoBehaviour
         }
 
         LoadGS();
+        isPath = false;
+        pathText.text = "ファイルを選択してください。";
     }
 
-    void UpdateSettingText(){
+    public string OpenFile()
+    {
+        //パスの取得
+        var path = EditorUtility.OpenFilePanel("Open txt", "", "txt");
+        if (string.IsNullOrEmpty(path)){
+            isPath = false;
+            pathText.text = "ファイルを選択してください。";
+            return "";
+        }
+
+        isPath = true;
+        return path;
+    }
+
+    public void open(){
+        path = OpenFile();
+        if(path.Length >= 20){
+            pathText.text = path.Substring(path.Length - 20);
+        }else{
+            pathText.text = path;
+        }
+    }
+
+    void UpdateSettingText()
+    {
         string ss = "";
         ss += $"初期ライフ: {gs.lifePoints}\n";
         ss += $"デッキ最低枚数: {gs.deckSize}\n";
         ss += $"同名カード: {gs.maxCopiesPerCard}枚まで\n";
         ss += $"<ターン進行>\n";
-        foreach(var step in gs.turnProgress){
+        foreach(var step in gs.turnProgress)
+        {
             ss += $"    -{step}\n";
         }
         ss += $"フィールドの上限枚数: {gs.fieldLimit}\n";
@@ -77,6 +110,10 @@ public class GameSettings : MonoBehaviour
 
     public void LoadGameSettings()
     {
+        string fileContent = File.ReadAllText(path);
+        ParseGameSettings(fileContent);
+
+        /*
         #if UNITY_EDITOR
         TextAsset gameSettingText = Resources.Load<TextAsset>("GameSetting");
         if (gameSettingText != null)
@@ -99,6 +136,7 @@ public class GameSettings : MonoBehaviour
             Debug.LogError("GameSetting.txt not found in application folder.");
         }
         #endif
+        */
     }
 
     // 設定をパースして変数に保存するメソッド
@@ -115,43 +153,41 @@ public class GameSettings : MonoBehaviour
             
             try
             {
-                if (line.Contains("inLife"))
+                string[] parts = line.Split(':');
+                if (parts.Length != 2) continue;
+
+                string key = parts[0].Trim();
+                string value = parts[1].Trim();
+
+                switch (key)
                 {
-                    string lifeString = line.Split(':')[1].Trim();
-                    gs.lifePoints = int.Parse(lifeString);
-                }
-                else if (line.Contains("miDeck"))
-                {
-                    string deckString = line.Split(':')[1].Trim();
-                    gs.deckSize = int.Parse(deckString);
-                }
-                else if (line.Contains("TurnProgress"))
-                {
-                    gs.turnProgress = line.Split(':')[1].Trim(new char[] { '[', ']', ' ' }).Split(',');
-                }
-                else if (line.Contains("FieldLimit"))
-                {
-                    string fieldLimitString = line.Split(':')[1].Trim();
-                    gs.fieldLimit = int.Parse(fieldLimitString);
-                }
-                else if (line.Contains("NoTargetSelection"))
-                {
-                    gs.noTargetSelection = line.Contains("T");
-                }
-                else if (line.Contains("FreeSummon"))
-                {
-                    gs.freeSummon = line.Contains("T");
-                }
-                else if (line.Contains("maxCopiesPerCard"))
-                {
-                    gs.maxCopiesPerCard = int.Parse(line.Split(':')[1].Trim());
-                }
-                else if (line.Contains("NoRace"))
-                {
-                    gs.NoRace = line.Contains("T");
+                    case "inLife":
+                        gs.lifePoints = int.Parse(value);
+                        break;
+                    case "miDeck":
+                        gs.deckSize = int.Parse(value);
+                        break;
+                    case "TurnProgress":
+                        ParseTurnProgress(value);
+                        break;
+                    case "FieldLimit":
+                        gs.fieldLimit = int.Parse(value);
+                        break;
+                    case "NoTargetSelection":
+                        gs.noTargetSelection = value.Contains("T");
+                        break;
+                    case "FreeSummon":
+                        gs.freeSummon = value.Contains("T");
+                        break;
+                    case "maxCopiesPerCard":
+                        gs.maxCopiesPerCard = int.Parse(value);
+                        break;
+                    case "NoRace":
+                        gs.NoRace = value.Contains("T");
+                        break;
                 }
             }
-            catch (FormatException e)
+            catch (Exception e)
             {
                 Debug.LogError($"Failed to parse line: {line}. Error: {e.Message}");
             }
@@ -159,5 +195,22 @@ public class GameSettings : MonoBehaviour
 
         Debug.Log("Game settings loaded successfully.");
         SaveGS();
+    }
+
+    private void ParseTurnProgress(string value)
+    {
+        string[] turn = value.Trim(new char[] { '[', ']', ' ' }).Split(',');
+        gs.turnProgress = new List<TurnProgress>();
+        foreach (var t in turn)
+        {
+            if (Enum.TryParse(t.Trim(), out TurnProgress progress))
+            {
+                gs.turnProgress.Add(progress);  // Add メソッドを使用
+            }
+            else
+            {
+                Debug.LogWarning($"Invalid TurnProgress value: {t}");
+            }
+        }
     }
 }

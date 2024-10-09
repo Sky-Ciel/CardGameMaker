@@ -2,21 +2,56 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEditor;
+using TMPro;
 
 public class CardManager : MonoBehaviour
 {
     public Sprite defaultCardImage; // デフォルト画像
     public List<Card> cardList = new List<Card>();
 
+    string path;
+    public TMP_Text pathText;
+    public bool isPath;
+
     void Start()
     {
-        LoadCards();  // カードのロードを呼び出し
+        Load_saveCards();  // カードのロードを呼び出し
+        path = ""; //パスのリセット
+        pathText.text = "ファイルを選択してください。";
+        isPath = false;
+    }
+
+    public string OpenFile()
+    {
+        //パスの取得
+        var path = EditorUtility.OpenFilePanel("Open json", "", "json");
+        if (string.IsNullOrEmpty(path)){
+            isPath = false;
+            pathText.text = "ファイルを選択してください。";
+            return "";
+        }
+        isPath = true;
+        return path;
+    }
+
+    public void open(){
+        path = OpenFile();
+        if(path.Length >= 20){
+            pathText.text = path.Substring(path.Length - 20);
+        }else{
+            pathText.text = path;
+        }
     }
 
     public void LoadCards()
     {
         cardList = new List<Card>();
 
+        string fileContent = File.ReadAllText(path);
+        ParseCardSettings(fileContent);
+
+        /*
         #if UNITY_EDITOR
         TextAsset cardSettingText = Resources.Load<TextAsset>("CardSetting");
         if (cardSettingText != null)
@@ -39,6 +74,7 @@ public class CardManager : MonoBehaviour
             Debug.LogError("CardSetting.json not found in application folder.");
         }
         #endif
+        */
     }
 
     private void ParseCardSettings(string content)

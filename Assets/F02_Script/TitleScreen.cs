@@ -36,6 +36,10 @@ public class TitleScreen : MonoBehaviour
         fade.SetActive(false);
     }
 
+    void Update(){
+        programButton.interactable = gameSettings.isPath && cardManager.isPath;
+    }
+
     //----------------- 処理 -----------------
     public void Programing(bool yes){
         if(yes){
