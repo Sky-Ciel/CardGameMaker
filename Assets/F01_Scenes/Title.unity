@@ -4791,7 +4791,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 386215987}
   m_HandleRect: {fileID: 386215986}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -5450,7 +5450,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u30B2\u30FC\u30E0\u306E\u8A2D\u5B9A"
+  m_text: "\u30B2\u30FC\u30E0\u306E\u8A2D\u5B9A\u304C\u767B\u9332\u3055\u308C\u3066\u3044\u307E\u305B\u3093\u3002"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: af46fd6f92e0e465ca82a6c3c39c595d, type: 2}
   m_sharedMaterial: {fileID: -1477403126246666814, guid: af46fd6f92e0e465ca82a6c3c39c595d, type: 2}
@@ -6962,8 +6962,47 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f2c57bc9e85f4f318346cd811b45e63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
+  canvasScaler: {fileID: 0}
+  graphicRaycaster: {fileID: 0}
+  canvasGroup: {fileID: 0}
+  windowRect: {fileID: 0}
+  scrollView: {fileID: 0}
+  searchInput: {fileID: 0}
+  confirmButton: {fileID: 0}
+  cancelButton: {fileID: 0}
+  backButton: {fileID: 0}
+  currentPathText: {fileID: 0}
+  currentPath: 
+  selectedFilePath: 
+  allowedExtensions: []
   customFont: {fileID: 11400000, guid: af46fd6f92e0e465ca82a6c3c39c595d, type: 2}
   referenceResolution: {x: 1920, y: 1080}
+  backgroundColor:
+    r: 0.2
+    g: 0.2
+    b: 0.2
+    a: 0.95
+  headerColor:
+    r: 0.1
+    g: 0.1
+    b: 0.1
+    a: 1
+  buttonColor:
+    r: 0.3
+    g: 0.3
+    b: 0.3
+    a: 1
+  textColor:
+    r: 0.9
+    g: 0.9
+    b: 0.9
+    a: 1
+  selectedColor:
+    r: 0.4
+    g: 0.6
+    b: 1
+    a: 1
 --- !u!1 &1770719206
 GameObject:
   m_ObjectHideFlags: 0

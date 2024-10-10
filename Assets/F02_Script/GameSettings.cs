@@ -24,6 +24,10 @@ public class GameSettings : MonoBehaviour
         if (gs == null)
         {
             gs = ScriptableObject.CreateInstance<GS>();
+            // デフォルト値設定
+            gs.deckSize = 40;
+            gs.maxCopiesPerCard = 3;
+            gs.fieldLimit = 5;
         }
 
         LoadGS();
@@ -215,7 +219,7 @@ public class GameSettings : MonoBehaviour
                     case "FreeSummon":
                         gs.freeSummon = value.Contains("T");
                         break;
-                    case "maxCopiesPerCard":
+                    case "maxCP":
                         gs.maxCopiesPerCard = int.Parse(value);
                         break;
                     case "NoRace":
