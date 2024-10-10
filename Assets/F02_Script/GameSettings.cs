@@ -11,10 +11,12 @@ public class GameSettings : MonoBehaviour
 
     public TMP_Text setting;
 
+    [Header("------ パス入力 ------")]
     string path;
     public TMP_Text pathText;
-
     public bool isPath;
+    public TMP_InputField inputField_path; 
+    public string[] allowedExtensions = { ".txt", ".json" };
 
     void Start()
     {
@@ -25,31 +27,63 @@ public class GameSettings : MonoBehaviour
         }
 
         LoadGS();
-        isPath = false;
-        pathText.text = "ファイルを選択してください。";
+        path = ""; //パスのリセット
     }
-
-    public string OpenFile()
+    void Update(){
+        OnConfirmButtonClick();
+    }
+    
+    public void OnConfirmButtonClick()
     {
-        //パスの取得
-        var path = EditorUtility.OpenFilePanel("Open txt", "", "txt");
-        if (string.IsNullOrEmpty(path)){
-            isPath = false;
-            pathText.text = "ファイルを選択してください。";
-            return "";
-        }
+        // InputFieldに入力されたパスを取得
+        path = inputField_path.text;
 
-        isPath = true;
-        return path;
+        // ファイルパスが空でないかチェック
+        if (!string.IsNullOrEmpty(path))
+        {
+            // 入力されたパスの拡張子を取得
+            string fileExtension = System.IO.Path.GetExtension(path).ToLower();
+
+            // 許可された拡張子かどうかを確認
+            if (IsExtensionAllowed(fileExtension))
+            {
+                // ファイルパスを20文字以内に短縮して表示
+                if (path.Length > 20)
+                {
+                    pathText.text = "ファイル: ..." + path.Substring(path.Length - 20);
+                }
+                else
+                {
+                    pathText.text = "ファイル: " + path;
+                }
+                isPath = true;
+            }
+            else
+            {
+                // 拡張子が一致しない場合の警告を表示
+                pathText.text = "ファイル形式が一致しません。";
+                isPath = false;
+            }
+        }
+        else
+        {
+            // パスが入力されていない場合の警告
+            pathText.text = "ファイルパスを入力してください。";
+            isPath = false;
+        }
     }
 
-    public void open(){
-        path = OpenFile();
-        if(path.Length >= 20){
-            pathText.text = path.Substring(path.Length - 20);
-        }else{
-            pathText.text = path;
+    // 許可された拡張子かどうかをチェックする関数
+    private bool IsExtensionAllowed(string extension)
+    {
+        foreach (string allowedExtension in allowedExtensions)
+        {
+            if (extension == allowedExtension)
+            {
+                return true;
+            }
         }
+        return false;
     }
 
     void UpdateSettingText()

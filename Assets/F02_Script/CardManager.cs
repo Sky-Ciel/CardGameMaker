@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 using TMPro;
 
 public class CardManager : MonoBehaviour
@@ -10,38 +11,74 @@ public class CardManager : MonoBehaviour
     public Sprite defaultCardImage; // デフォルト画像
     public List<Card> cardList = new List<Card>();
 
+    [Header("------ パス入力 ------")]
     string path;
     public TMP_Text pathText;
     public bool isPath;
+    public TMP_InputField inputField_path; 
+    public string[] allowedExtensions = { ".txt", ".json" };
 
     void Start()
     {
         Load_saveCards();  // カードのロードを呼び出し
         path = ""; //パスのリセット
-        pathText.text = "ファイルを選択してください。";
-        isPath = false;
     }
 
-    public string OpenFile()
+    void Update(){
+        OnConfirmButtonClick();
+    }
+    
+    public void OnConfirmButtonClick()
     {
-        //パスの取得
-        var path = EditorUtility.OpenFilePanel("Open json", "", "json");
-        if (string.IsNullOrEmpty(path)){
-            isPath = false;
-            pathText.text = "ファイルを選択してください。";
-            return "";
+        // InputFieldに入力されたパスを取得
+        path = inputField_path.text;
+
+        // ファイルパスが空でないかチェック
+        if (!string.IsNullOrEmpty(path))
+        {
+            // 入力されたパスの拡張子を取得
+            string fileExtension = System.IO.Path.GetExtension(path).ToLower();
+
+            // 許可された拡張子かどうかを確認
+            if (IsExtensionAllowed(fileExtension))
+            {
+                // ファイルパスを20文字以内に短縮して表示
+                if (path.Length > 20)
+                {
+                    pathText.text = "ファイル: ..." + path.Substring(path.Length - 20);
+                }
+                else
+                {
+                    pathText.text = "ファイル: " + path;
+                }
+                isPath = true;
+            }
+            else
+            {
+                // 拡張子が一致しない場合の警告を表示
+                pathText.text = "ファイル形式が一致しません。";
+                isPath = false;
+            }
         }
-        isPath = true;
-        return path;
+        else
+        {
+            // パスが入力されていない場合の警告
+            pathText.text = "ファイルパスを入力してください。";
+            isPath = false;
+        }
     }
 
-    public void open(){
-        path = OpenFile();
-        if(path.Length >= 20){
-            pathText.text = path.Substring(path.Length - 20);
-        }else{
-            pathText.text = path;
+    // 許可された拡張子かどうかをチェックする関数
+    private bool IsExtensionAllowed(string extension)
+    {
+        foreach (string allowedExtension in allowedExtensions)
+        {
+            if (extension == allowedExtension)
+            {
+                return true;
+            }
         }
+        return false;
     }
 
     public void LoadCards()
