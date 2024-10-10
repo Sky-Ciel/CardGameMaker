@@ -27,7 +27,8 @@ public class GameSettings : MonoBehaviour
         }
 
         LoadGS();
-        path = ""; //パスのリセット
+        path = PlayerPrefs.GetString("GameSET_Path",""); //パスのリセット
+        inputField_path.text = path;
     }
     void Update(){
         OnConfirmButtonClick();
@@ -114,6 +115,7 @@ public class GameSettings : MonoBehaviour
         if (gs != null)
         {
             PlayerPrefsUtility.SaveScriptableObject("GameSetting", gs);
+            PlayerPrefs.SetString("GameSET_Path",path);
             PlayerPrefs.Save();
             Debug.Log("Game settings saved.");
         }

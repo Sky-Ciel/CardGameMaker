@@ -21,7 +21,9 @@ public class CardManager : MonoBehaviour
     void Start()
     {
         Load_saveCards();  // カードのロードを呼び出し
-        path = ""; //パスのリセット
+        
+        path = PlayerPrefs.GetString("CardSET_Path",""); //パスのリセット
+        inputField_path.text = path;
     }
 
     void Update(){
@@ -236,6 +238,7 @@ public class CardManager : MonoBehaviour
 
         string json = JsonConvert.SerializeObject(cardList);  // カードリストをJSONに変換
         PlayerPrefs.SetString("CardData", json);  // PlayerPrefs に保存
+        PlayerPrefs.SetString("CardSET_Path",path);
         PlayerPrefs.Save();
     }
 
