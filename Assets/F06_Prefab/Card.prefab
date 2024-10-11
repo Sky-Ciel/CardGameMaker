@@ -129,6 +129,7 @@ MonoBehaviour:
   cardCostText: {fileID: 6516043405291951484}
   cardRaceText: {fileID: 8488832370128942894}
   cardStatesText: {fileID: 640137299874775903}
+  defaultCardImage: {fileID: 21300000, guid: 6144854b66d5948ddb8047e4abaa2963, type: 3}
   flameImage: {fileID: 3901489359262741790}
   flames:
   - {fileID: 21300000, guid: 72296c686085b49388fc1210b358dd3d, type: 3}
@@ -139,9 +140,10 @@ MonoBehaviour:
   - {fileID: 21300000, guid: a2ae7578b6dac49b993755cdba462646, type: 3}
   flames_magi: {fileID: 21300000, guid: c15141635bd4b41f78ddfdbca7d0a2ca, type: 3}
   flames_trap: {fileID: 21300000, guid: b15c681aec4a34fe4841c7224bbfe31a, type: 3}
-  popupPrefab: {fileID: 7793952262427278294, guid: f578e57e9640148388798c5191a89d1f, type: 3}
+  popupPrefab: {fileID: 398222569236881747, guid: 636c59cda25384215bdba21e48b04b77, type: 3}
   popupAnimationDuration: 0.5
   popupEaseType: 27
+  fade: {fileID: 3651799785756305750, guid: f1ec0ccf7452e437a8e99cc4c16bdd65, type: 3}
 --- !u!1 &5673039501211459539
 GameObject:
   m_ObjectHideFlags: 0
@@ -275,7 +277,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1

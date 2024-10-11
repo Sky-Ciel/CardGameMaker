@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
@@ -19,6 +20,8 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     private CanvasGroup canvasGroup;
     private GameObject draggingCard;  // ドラッグ時のコピーオブジェクト
 
+    public Sprite defaultCardImage;
+
     GS gs; //ゲーム設定
 
     [Header("------ フレーム情報 ------")]
@@ -33,6 +36,10 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
     [Header("------ アニメーションセッティング ------")]
     [SerializeField] private float popupAnimationDuration = 0.5f;
     [SerializeField] private Ease popupEaseType = Ease.OutBack;
+
+    [Header("------ フェード ------")]
+    public GameObject fade;
+    private GameObject currentFade;
 
     private void Start()
     {
@@ -51,6 +58,26 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         card = cardData;
         cardNameText.text = card.cardName;
         cardCostText.text = card.cost.ToString();
+
+        if (File.Exists(card.illustrationPath))
+        {
+            byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
+            Debug.Log($"card.illustrationPath: {card.illustrationPath}を読み込み");
+
+            Texture2D texture = new Texture2D(2, 2);  // Texture2Dのインスタンスを作成
+            if (texture.LoadImage(fileData))  // 画像データをテクスチャに読み込む
+            {
+                card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            }
+            else
+            {
+                card.illustration = defaultCardImage;  // デフォルト画像を使用
+            }
+        }
+        else
+        {
+            card.illustration = defaultCardImage;  // デフォルト画像を使用
+        }
 
         cardImage.sprite = card.illustration;
 
@@ -125,6 +152,7 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         Destroy(draggingCard);  // ドラッグ用のコピーを削除
     }
 
+    // ------------------ ポップアップウィンドウ ------------------
     public void OnPointerClick(PointerEventData eventData)
     {
         OpenPopup();
@@ -132,8 +160,17 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
 
     private void OpenPopup()
     {
+        Canvas mainCanvas = FindObjectOfType<Canvas>();
+
+        currentFade = Instantiate(fade);
+        currentFade.transform.SetParent(mainCanvas.transform, false); // Canvasに親を設定
+        currentFade.transform.localPosition = Vector3.zero;
+        currentFade.SetActive(true);
+
         // Create the popup
-        currentPopup = popupPrefab;
+        currentPopup = Instantiate(popupPrefab);
+        currentPopup.transform.SetParent(mainCanvas.transform, false); // Canvasに親を設定
+        currentPopup.transform.localPosition = Vector3.zero;
         currentPopup.SetActive(true);
         
         // Set the popup's initial state
@@ -141,11 +178,17 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         CanvasGroup canvasGroup = currentPopup.GetComponent<CanvasGroup>();
         if (canvasGroup == null) canvasGroup = currentPopup.AddComponent<CanvasGroup>();
 
+        CanvasGroup canvasGroup_f = currentFade.GetComponent<CanvasGroup>();
+        if (canvasGroup_f == null) canvasGroup_f = currentFade.AddComponent<CanvasGroup>();
+
         // Set initial values for animation
         canvasGroup.alpha = 0f;
         popupRect.localScale = Vector3.zero;
 
+        canvasGroup_f.alpha = 0f;
+
         // Animate the popup
+        canvasGroup_f.DOFade(1f, popupAnimationDuration);
         canvasGroup.DOFade(1f, popupAnimationDuration);
         popupRect.DOScale(Vector3.one, popupAnimationDuration).SetEase(popupEaseType);
 
@@ -158,11 +201,20 @@ public class CardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, 
         {
             CanvasGroup canvasGroup = currentPopup.GetComponent<CanvasGroup>();
             RectTransform popupRect = currentPopup.GetComponent<RectTransform>();
+            CanvasGroup canvasGroup_f = currentFade.GetComponent<CanvasGroup>();
 
             // Animate closing
             canvasGroup.DOFade(0f, popupAnimationDuration);
+
+            canvasGroup_f.DOFade(0f, popupAnimationDuration).OnComplete(() => {
+                currentFade.SetActive(false);
+                Destroy(currentFade);
+                currentFade = null;
+            });
+
             popupRect.DOScale(Vector3.zero, popupAnimationDuration).SetEase(popupEaseType).OnComplete(() => {
                 currentPopup.SetActive(false);
+                Destroy(currentPopup);
                 currentPopup = null;
             });
         }

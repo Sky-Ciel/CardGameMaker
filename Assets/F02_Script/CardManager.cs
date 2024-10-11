@@ -11,26 +11,35 @@ public class CardManager : MonoBehaviour
     public Sprite defaultCardImage; // デフォルト画像
     public List<Card> cardList = new List<Card>();
 
-    [Header("------ パス入力 ------")]
+    [Header("------ カードパス入力 ------")]
     string path;
     public TMP_Text pathText;
     public bool isPath;
     public TMP_InputField inputField_path; 
     public string[] allowedExtensions = { ".txt", ".json" };
 
+    [Header("------ イメージパス入力 ------")]
+    public TMP_InputField inputField_img;  // フォルダパスを入力するフィールド
+    public TMP_Text pathText_img;          // フォルダパスの表示用
+    private string folderPath;
+    public bool isIMGPath;
+
     void Start()
     {
         Load_saveCards();  // カードのロードを呼び出し
         
         path = PlayerPrefs.GetString("CardSET_Path",""); //パスのリセット
+        folderPath = PlayerPrefs.GetString("ImageSET_Path",""); //パスのリセット
         inputField_path.text = path;
+        inputField_img.text = folderPath;
     }
 
     void Update(){
         OnConfirmButtonClick();
+        OnConfirmFolderClick();
     }
     
-    public void OnConfirmButtonClick()
+    void OnConfirmButtonClick()
     {
         // InputFieldに入力されたパスを取得
         path = inputField_path.text;
@@ -81,6 +90,25 @@ public class CardManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    // フォルダ選択
+    void OnConfirmFolderClick()
+    {
+        folderPath = inputField_img.text;  // 入力されたフォルダパスを取得
+
+        if (!string.IsNullOrEmpty(folderPath) && Directory.Exists(folderPath))
+        {
+            // パスが正しい場合
+            pathText_img.text = "フォルダ: " + folderPath;
+            isIMGPath = true;
+        }
+        else
+        {
+            // フォルダが存在しない場合の警告
+            pathText_img.text = "指定されたフォルダが見つかりません。";
+            isIMGPath = false;
+        }
     }
 
     public void LoadCards()
@@ -189,28 +217,29 @@ public class CardManager : MonoBehaviour
                     }
                 }
 
-                // 画像の読み込み
-                #if UNITY_EDITOR
-                newCard.illustration = Resources.Load<Sprite>("Image/" + cardSetting.illust);
-                if (newCard.illustration == null)
-                {
-                    newCard.illustration = defaultCardImage;  // デフォルト画像を使用
-                }
-                #else
-                string imagePath = Path.Combine(Application.dataPath, "../Image/", cardSetting.illust);
+                string imagePath = Path.Combine(folderPath, cardSetting.illust);  // フォルダパスと画像名を結合
                 if (File.Exists(imagePath))
                 {
-                    byte[] imageBytes = File.ReadAllBytes(imagePath);
-                    Texture2D texture = new Texture2D(2, 2);
-                    texture.LoadImage(imageBytes);
-                    newCard.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    byte[] fileData = System.IO.File.ReadAllBytes(imagePath);  // 画像ファイルをバイト配列として読み込み
+                    Texture2D texture = new Texture2D(2, 2);  // Texture2Dのインスタンスを作成
+                    if (texture.LoadImage(fileData))  // 画像データをテクスチャに読み込む
+                    {
+                        newCard.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                        newCard.illustrationPath = imagePath;
+                        Debug.Log($"Image({newCard.illustrationPath}) を保存しました！");
+                    }
+                    else
+                    {
+                        newCard.illustration = defaultCardImage;  // デフォルト画像を使用
+                    }
                 }
                 else
                 {
                     newCard.illustration = defaultCardImage;  // デフォルト画像を使用
                 }
-                #endif
 
+                Debug.Log($"newCard.illustrationPath: ({newCard.illustrationPath})");
+                
                 // カードをリストに追加
                 cardList.Add(newCard);
             }
@@ -227,18 +256,19 @@ public class CardManager : MonoBehaviour
     // カードデータを保存
     public void SaveCards()
     {
-        foreach (var card in cardList)
+        /*foreach (var card in cardList)
         {
             // Sprite のパスを保存する
             if (card.illustration != null)
             {
                 card.illustrationPath = card.illustration.name;  // Resources フォルダにある場合はファイル名
             }
-        }
+        }*/
 
         string json = JsonConvert.SerializeObject(cardList);  // カードリストをJSONに変換
         PlayerPrefs.SetString("CardData", json);  // PlayerPrefs に保存
         PlayerPrefs.SetString("CardSET_Path",path);
+        PlayerPrefs.SetString("ImageSET_Path",folderPath);
         PlayerPrefs.Save();
     }
 

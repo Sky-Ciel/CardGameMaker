@@ -49,11 +49,12 @@ public class SearchMenuManager : MonoBehaviour
     [Tooltip("カードの表示用プレハブ")]
     public GameObject cardPrefab;
 
-    [Header("------ ポップアップ カード詳細 ------")]
-    public GameObject popupInfo;
-
     [Header("------ 検索条件をリセットするボタン ------")]
     public Button resetButton;
+
+    [Header("------ フェード ------")]
+    public GameObject fade;
+    public CanvasGroup fadeC;
 
     private List<Card> availableCards;
     private List<int> selectedCosts = new List<int>();
@@ -85,6 +86,7 @@ public class SearchMenuManager : MonoBehaviour
         InitializeTypeDropdown();
 
         searchMenu.SetActive(false);
+        fade.SetActive(false);
     }
 
     private void InitializeTypeDropdown()
@@ -98,9 +100,14 @@ public class SearchMenuManager : MonoBehaviour
     public void OpenSearchMenu()
     {
         searchMenu.SetActive(true);
+        fade.SetActive(true);
 
         CanvasGroup canvasGroup = searchMenu.GetComponent<CanvasGroup>();
         if (canvasGroup == null) canvasGroup = searchMenu.AddComponent<CanvasGroup>();
+
+        fadeC.alpha = 0;
+        fadeC.DOFade(1, 0.5f);
+
         canvasGroup.alpha = 0;
         canvasGroup.DOFade(1, 0.5f);
         searchMenu.transform.localScale = Vector3.zero;
@@ -110,6 +117,9 @@ public class SearchMenuManager : MonoBehaviour
     public void CloseSearchMenu()
     {
         CanvasGroup canvasGroup = searchMenu.GetComponent<CanvasGroup>();
+
+        fadeC.DOFade(0, 0.5f).OnComplete(() => fade.SetActive(false));
+        
         canvasGroup.DOFade(0, 0.5f).OnComplete(() => searchMenu.SetActive(false));
         searchMenu.transform.DOScale(Vector3.zero, 0.5f).SetEase(Ease.InBack);
     }
@@ -144,7 +154,6 @@ public class SearchMenuManager : MonoBehaviour
             GameObject cardObject = Instantiate(cardPrefab, cardContent);
             CardPrefabScript cardScript = cardObject.GetComponent<CardPrefabScript>();
             cardScript.SetCardInfo(card);
-            cardScript.popupPrefab = popupInfo;
         }
     }
 

@@ -37,7 +37,7 @@ public class TitleScreen : MonoBehaviour
     }
 
     void Update(){
-        programButton.interactable = gameSettings.isPath && cardManager.isPath;
+        programButton.interactable = gameSettings.isPath && cardManager.isPath && cardManager.isIMGPath;
     }
 
     //----------------- 処理 -----------------
