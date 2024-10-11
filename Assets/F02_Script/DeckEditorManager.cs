@@ -33,6 +33,10 @@ public class DeckEditorManager : MonoBehaviour
     public float tweenDuration = 0.5f;  // メニューの動きの速度
     private bool isMenuOpen = false;  // メニューが開いているかのフラグ
 
+    [Header("------ フェード ------")]
+    public GameObject s_fade;
+    public CanvasGroup c_fade;
+
     void Start()
     {
         fade.SetActive(false);
@@ -61,6 +65,12 @@ public class DeckEditorManager : MonoBehaviour
         }
 
         popupInfo.SetActive(false);
+
+        c_fade.alpha = 1f;
+        s_fade.SetActive(true);
+        c_fade.DOFade(0f, 0.5f).OnComplete(() => {
+            s_fade.SetActive(false);
+        });
     }
 
     // 使用可能なカードをロードする関数（サンプル）
@@ -101,7 +111,11 @@ public class DeckEditorManager : MonoBehaviour
     public void GoTitle(bool yes)
     {
         window_back.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad);
-        SceneManager.LoadScene("Title");
+        c_fade.alpha = 0f;
+        s_fade.SetActive(true);
+        c_fade.DOFade(1f, 0.5f).OnComplete(() => {
+            SceneManager.LoadScene("Title");
+        });
     }
 
     // メニューを開閉するメソッド

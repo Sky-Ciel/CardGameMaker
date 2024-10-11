@@ -23,6 +23,10 @@ public class TitleScreen : MonoBehaviour
     [Header("------ 設定表示ボタン ------")]
     public RectTransform window_set; // アニメーションさせるウィンドウ
 
+    [Header("------ 全画面フェード ------")]
+    public CanvasGroup AllFadeCanva; // フェードさせる要素
+    public GameObject AllFade;
+
     void Start()
     {
         Debug.Log("Hello World");
@@ -34,6 +38,23 @@ public class TitleScreen : MonoBehaviour
 
         AnimateButton();
         fade.SetActive(false);
+
+        fadeIn();
+    }
+
+    void fadeIn(){
+        AllFadeCanva.alpha = 1f;
+        AllFade.SetActive(true);
+        AllFadeCanva.DOFade(0f, 0.5f).OnComplete(() => {
+            AllFade.SetActive(false);
+        });
+    }
+    void fadeOut(string scene){
+        AllFadeCanva.alpha = 0f;
+        AllFade.SetActive(true);
+        AllFadeCanva.DOFade(1f, 0.5f).OnComplete(() => {
+            SceneManager.LoadScene(scene);
+        });
     }
 
     void Update(){
@@ -60,7 +81,7 @@ public class TitleScreen : MonoBehaviour
     public void GoToDeckBuilding(bool yes)
     {
         if(yes){
-            SceneManager.LoadScene("DeckBuild");
+            fadeOut("DeckBuild");
         }else{
             window_d.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad); // 1秒で降りる
             fade.SetActive(false);
