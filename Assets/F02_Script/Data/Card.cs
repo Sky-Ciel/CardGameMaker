@@ -18,7 +18,7 @@ public class Card : ScriptableObject
     public CardEffect effect; // 効果
 
     // 保存しないプロパティ
-    //[System.NonSerialized]
+    [System.NonSerialized]
     public Sprite illustration;  // Sprite はシリアライズしない
 
     public string GenerateEffectText()

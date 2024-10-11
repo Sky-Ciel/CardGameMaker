@@ -100,7 +100,15 @@ public class CardManager : MonoBehaviour
         if (!string.IsNullOrEmpty(folderPath) && Directory.Exists(folderPath))
         {
             // パスが正しい場合
-            pathText_img.text = "フォルダ: " + folderPath;
+            // ファイルパスを20文字以内に短縮して表示
+            if (folderPath.Length > 20)
+            {
+                pathText_img.text = "フォルダ: ..." + folderPath.Substring(folderPath.Length - 20);
+            }
+            else
+            {
+                pathText_img.text = "フォルダ: " + folderPath;
+            }
             isIMGPath = true;
         }
         else
@@ -117,31 +125,6 @@ public class CardManager : MonoBehaviour
 
         string fileContent = File.ReadAllText(path);
         ParseCardSettings(fileContent);
-
-        /*
-        #if UNITY_EDITOR
-        TextAsset cardSettingText = Resources.Load<TextAsset>("CardSetting");
-        if (cardSettingText != null)
-        {
-            ParseCardSettings(cardSettingText.text);
-        }
-        else
-        {
-            Debug.LogError("CardSetting.json not found in Resources.");
-        }
-        #else
-        string filePath = Path.Combine(Application.dataPath, "../CardSetting.json");
-        if (File.Exists(filePath))
-        {
-            string fileContent = File.ReadAllText(filePath);
-            ParseCardSettings(fileContent);
-        }
-        else
-        {
-            Debug.LogError("CardSetting.json not found in application folder.");
-        }
-        #endif
-        */
     }
 
     private void ParseCardSettings(string content)
@@ -226,7 +209,7 @@ public class CardManager : MonoBehaviour
                     {
                         newCard.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
                         newCard.illustrationPath = imagePath;
-                        Debug.Log($"Image({newCard.illustrationPath}) を保存しました！");
+                        //Debug.Log($"Image({newCard.illustrationPath}) を保存しました！");
                     }
                     else
                     {
@@ -238,7 +221,7 @@ public class CardManager : MonoBehaviour
                     newCard.illustration = defaultCardImage;  // デフォルト画像を使用
                 }
 
-                Debug.Log($"newCard.illustrationPath: ({newCard.illustrationPath})");
+                //Debug.Log($"newCard.illustrationPath: ({newCard.illustrationPath})");
                 
                 // カードをリストに追加
                 cardList.Add(newCard);
