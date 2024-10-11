@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using DG.Tweening;
+using Newtonsoft.Json;
 
 public class DeckDropArea : MonoBehaviour, IDropHandler
 {
@@ -15,6 +16,7 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
     public Transform alertContainer;  // アラート表示場所（Canvas内）
 
     private List<Card> deckCards = new List<Card>();  // デッキ内のカードリスト
+    Deck deck;
 
     DeckDropArea thisScript;
 
