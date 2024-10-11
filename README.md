@@ -24,21 +24,28 @@
    ```
    - デフォルト: 40
    - 説明: デッキの最低枚数
+  
+3. **同名カードの上限枚数**
+   ```
+   maxCP: 3
+   ```
+   - デフォルト: 3
+   - 説明: 同じデッキに入れられる同名カードの上限枚数
 
-3. **ターン進行**
+4. **ターン進行**
    ```
    TurnProgress: [StandbyPhase, DrawPhase, ChargePhase, MainPhase, BattlePhase, EndPhase]
    ```
    - 説明: ゲームの各ターンにおけるフェイズの順番
 
-4. **フィールドの上限枚数**
+5. **フィールドの上限枚数**
    ```
    FieldLimit: 5
    ```
    - デフォルト: 5
    - 説明: フィールドに出せるカードの最大数
 
-5. **追加オプション設定 (任意)**
+6. **追加オプション設定 (任意)**
    ```
    NoTargetSelection: T
    FreeSummon: T
@@ -51,6 +58,7 @@
 ```
 inLife: 4000
 miDeck: 40
+maxCP: 3
 TurnProgress: [StandbyPhase, DrawPhase, ChargePhase, MainPhase, BattlePhase, EndPhase]
 FieldLimit: 5
 NoTargetSelection: T
