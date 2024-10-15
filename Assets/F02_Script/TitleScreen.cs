@@ -81,7 +81,7 @@ public class TitleScreen : MonoBehaviour
     public void GoToDeckBuilding(bool yes)
     {
         if(yes){
-            fadeOut("DeckBuild");
+            fadeOut("DeckSelect");
         }else{
             window_d.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad); // 1秒で降りる
             fade.SetActive(false);

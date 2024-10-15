@@ -6,4 +6,5 @@ public class Deck : ScriptableObject
 {
     public string deckName;  // デッキ名
     public List<Card> deckCards;  // カードリスト
+    public Card KeyCard; // キーカード
 }

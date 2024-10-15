@@ -186,12 +186,12 @@ public class SearchMenuManager : MonoBehaviour
         if (selectedCosts.Contains(cost))
         {
             selectedCosts.Remove(cost);
-            buttonImage.color = Color.white;
+            buttonImage.color = Color.black;
         }
         else
         {
             selectedCosts.Add(cost);
-            buttonImage.color = Color.green;
+            buttonImage.color = Color.yellow;
         }
 
         //PerformSearch();
@@ -206,7 +206,7 @@ public class SearchMenuManager : MonoBehaviour
 
         foreach (Transform child in costContent)
         {
-            child.GetComponent<Image>().color = Color.white;
+            child.GetComponent<Image>().color = Color.black;
         }
 
         //PerformSearch();

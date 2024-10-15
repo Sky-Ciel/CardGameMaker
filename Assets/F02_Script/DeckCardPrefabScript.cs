@@ -15,6 +15,8 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
     public TextMeshProUGUI cardRaceText;  // 種族表示用テキスト
     public TextMeshProUGUI cardStatesText;  // 攻守表示用テキスト
 
+    public Sprite defaultCardImage;
+
     private CanvasGroup canvasGroup;
     private Vector3 startPosition;
     private Transform parentBeforeDrag;
@@ -52,7 +54,15 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
         cardNameText.text = card.cardName;
         cardCostText.text = card.cost.ToString();
 
-        cardImage.sprite = card.illustration;
+
+        byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
+        Texture2D texture = new Texture2D(2, 2);
+        if(texture.LoadImage(fileData)){
+            card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+            cardImage.sprite = card.illustration;
+        }else{
+            cardImage.sprite = defaultCardImage;
+        }
 
         cardRaceText.text = "";
         cardStatesText.text = "";

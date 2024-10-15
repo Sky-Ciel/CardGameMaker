@@ -129,6 +129,7 @@ MonoBehaviour:
   cardCostText: {fileID: 1948603278664820708}
   cardRaceText: {fileID: 5686368272771597389}
   cardStatesText: {fileID: 2252889716284625612}
+  defaultCardImage: {fileID: 21300000, guid: 1ba9c669279a64f1eabc81664ab71ea7, type: 3}
   deckDropArea: {fileID: 0}
   flameImage: {fileID: 599688082320284848}
   flames:

@@ -142,8 +142,8 @@ public class CardManager : MonoBehaviour
                     Rank = cardSetting.rank != 0 ? cardSetting.rank : 1,
                     Rarity = cardSetting.rarity != 0 ? cardSetting.rarity : 1,
                     Race = !string.IsNullOrEmpty(cardSetting.race) ? cardSetting.race : "Unknown Race",
-                    element = cardSetting.element != null ? cardSetting.element : Element.Earth,
-                    cardType = cardSetting.type != null ? cardSetting.type : CardType.Unit,
+                    element = cardSetting.element,//cardSetting.element != null ? cardSetting.element : Element.Earth,
+                    cardType = cardSetting.type,// != null ? cardSetting.type : CardType.Unit,
                     illustrationPath = !string.IsNullOrEmpty(cardSetting.illust) ? cardSetting.illust : "defaultPath",
                     cost = cardSetting.cost != 0 ? cardSetting.cost : 1,
                     effect = new CardEffect() // 初期値を空の CardEffect に

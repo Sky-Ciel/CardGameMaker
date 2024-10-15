@@ -8,6 +8,13 @@ using UnityEngine.SceneManagement;
 
 public class DeckEditorManager : MonoBehaviour
 {
+    [Header("------ デッキ編集情報 ------")]
+    public static bool isEdit; //新規か編集かの違い
+    public static int EditNumber;
+    public DeckDropArea DDA;
+    public Deck blankDeck;
+    public List<Deck> all_deck;
+ 
     [Header("------ カード一覧 ------")]
     public ScrollRect cardScrollView;  // 上段のカードスクロールビュー
     public GameObject cardPrefab;      // カードを表示するPrefab
@@ -37,12 +44,20 @@ public class DeckEditorManager : MonoBehaviour
     public GameObject s_fade;
     public CanvasGroup c_fade;
 
-    void Start()
-    {
-        fade.SetActive(false);
-
+    void Awake(){
         LoadAvailableCards();  // カード情報をロード
         DisplayCards();        // カードをスクロールビューに表示
+        all_deck = PlayerPrefsUtility.LoadList<Deck>("AllDecks");
+    }
+
+    void Start()
+    {
+        if(isEdit){
+            DDA.deck = all_deck[EditNumber];
+            DDA.LoadDeck_update(all_deck[EditNumber]);
+        }else{
+            DDA.deck = blankDeck;
+        }
     }
 
     // 全てのカードを表示する関数
@@ -110,11 +125,23 @@ public class DeckEditorManager : MonoBehaviour
 
     public void GoTitle(bool yes)
     {
+        if(yes){
+            if(isEdit){
+                all_deck[EditNumber] = DDA.deck;
+            }else{
+                all_deck.Add(DDA.deck);
+            }
+            PlayerPrefsUtility.SaveList<Deck>("AllDecks", all_deck);
+        }
+
+        DeckEditorManager.isEdit = false;
+        DeckEditorManager.EditNumber = 0;
+
         window_back.DOAnchorPos(new Vector2(0,1100), 0.7f).SetEase(Ease.OutQuad);
         c_fade.alpha = 0f;
         s_fade.SetActive(true);
         c_fade.DOFade(1f, 0.5f).OnComplete(() => {
-            SceneManager.LoadScene("Title");
+            SceneManager.LoadScene("DeckSelect");
         });
     }
 

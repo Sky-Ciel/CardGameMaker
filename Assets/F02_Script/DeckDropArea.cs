@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using DG.Tweening;
 using Newtonsoft.Json;
+using TMPro;
 
 public class DeckDropArea : MonoBehaviour, IDropHandler
 {
@@ -16,7 +17,8 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
     public Transform alertContainer;  // アラート表示場所（Canvas内）
 
     private List<Card> deckCards = new List<Card>();  // デッキ内のカードリスト
-    Deck deck;
+    public Deck deck;
+    public TMP_InputField deckNameInput;
 
     DeckDropArea thisScript;
 
@@ -38,10 +40,33 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
         UpdateLists();
     }
 
+    public void LoadDeck_update(Deck D){
+        deck = D;
+        deckCards = deck.deckCards;
+        deckNameInput.text = deck.deckName;
+        Debug.Log(deck.deckName);
+
+        // デッキに追加
+        for(int i=0; i<deckCards.Count; i++){
+            GameObject newCard = Instantiate(deckCardPrefab, deckContent);
+            DeckCardPrefabScript newCardScript = newCard.GetComponent<DeckCardPrefabScript>();
+            newCardScript.SetCardInfo(deck.deckCards[i], this);  // デッキエリアを参照に追加
+            SortDeck();  // デッキ内のカードをソート
+        }
+
+        UpdateLists();
+    }
+
     void UpdateLists(){
+        UpdateDeck(); //デッキの内容を更新
         // デッキリストとコスト分布グラフを更新
         deckListDisplay.UpdateDeckList(deckCards);
         costDistributionGraph.UpdateCostDistribution(deckCards);
+    }
+
+    void UpdateDeck(){
+        deck.deckCards = deckCards;
+        deck.deckName = deckNameInput.text;
     }
 
     public void OnDrop(PointerEventData eventData)
