@@ -3,6 +3,9 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 using DG.Tweening;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
@@ -54,12 +57,15 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
         cardNameText.text = card.cardName;
         cardCostText.text = card.cost.ToString();
 
-
-        byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
-        Texture2D texture = new Texture2D(2, 2);
-        if(texture.LoadImage(fileData)){
-            card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
-            cardImage.sprite = card.illustration;
+        if (File.Exists(card.illustrationPath)){
+            byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
+            Texture2D texture = new Texture2D(2, 2);
+            if(texture.LoadImage(fileData)){
+                card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                cardImage.sprite = card.illustration;
+            }else{
+                cardImage.sprite = defaultCardImage;
+            }
         }else{
             cardImage.sprite = defaultCardImage;
         }
