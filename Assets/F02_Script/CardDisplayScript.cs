@@ -24,6 +24,8 @@ public class CardDisplayScript : MonoBehaviour
 
     public Sprite defaultCardImage;
 
+    public GameObject cardBack;
+
     void Update()
     {
         SetCardInfo(card);
@@ -32,73 +34,79 @@ public class CardDisplayScript : MonoBehaviour
     // カード情報を設定する
     public void SetCardInfo(Card cardData)
     {
-        card = cardData;
-        cardNameText.text = card.cardName;
-        cardCostText.text = card.cost.ToString();
+        if(cardData == null){
+            cardBack.SetActive(true);
+        }else{
+            cardBack.SetActive(false);
 
-        if (File.Exists(card.illustrationPath))
-        {
-            byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
-            Debug.Log($"card.illustrationPath: {card.illustrationPath}を読み込み");
+            card = cardData;
+            cardNameText.text = card.cardName;
+            cardCostText.text = card.cost.ToString();
 
-            Texture2D texture = new Texture2D(2, 2);  // Texture2Dのインスタンスを作成
-            if (texture.LoadImage(fileData))  // 画像データをテクスチャに読み込む
+            if (File.Exists(card.illustrationPath))
             {
-                card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                byte[] fileData = System.IO.File.ReadAllBytes(card.illustrationPath);  // 画像ファイルをバイト配列として読み込み
+                Debug.Log($"card.illustrationPath: {card.illustrationPath}を読み込み");
+
+                Texture2D texture = new Texture2D(2, 2);  // Texture2Dのインスタンスを作成
+                if (texture.LoadImage(fileData))  // 画像データをテクスチャに読み込む
+                {
+                    card.illustration = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                }
+                else
+                {
+                    card.illustration = defaultCardImage;  // デフォルト画像を使用
+                }
             }
             else
             {
                 card.illustration = defaultCardImage;  // デフォルト画像を使用
             }
-        }
-        else
-        {
-            card.illustration = defaultCardImage;  // デフォルト画像を使用
-        }
 
-        cardImage.sprite = card.illustration;
+            cardImage.sprite = card.illustration;
 
-        cardRaceText.text = "";
-        cardStatesText.text = "";
+            cardRaceText.text = "";
+            cardStatesText.text = "";
 
-        cardTextText.text = card.GenerateEffectText();
-        
-        // カードの種類による分岐
-        if(card.cardType == CardType.Magic){
-            flameImage.sprite = flames_magi;
-        }else if(card.cardType == CardType.Trap){
-            flameImage.sprite = flames_trap;
-        }else{
-            cardStatesText.text = "ATK: " +card.Atk.ToString() + " / " + "DEF: " +card.Def.ToString();
-
-            if(card.Race != "" && card.Race != null){
-                cardRaceText.text = card.Race;
-            }else{
-                cardRaceText.text = card.cardType.ToString();
-            }
+            cardTextText.text = card.GenerateEffectText();
             
-            switch(card.element){
-                case Element.Fire:
-                    flameImage.sprite = flames[0];
-                    break;
-                case Element.Water:
-                    flameImage.sprite = flames[1];
-                    break;
-                case Element.Earth:
-                    flameImage.sprite = flames[2];
-                    break;
-                case Element.Air:
-                    flameImage.sprite = flames[3];
-                    break;
-                case Element.Light:
-                    flameImage.sprite = flames[4];
-                    break;
-                case Element.Dark:
-                    flameImage.sprite = flames[5];
-                    break;
-                default:
-                    flameImage.sprite = flames[0];
-                    break;
+            // カードの種類による分岐
+            if(card.cardType == CardType.Magic){
+                flameImage.sprite = flames_magi;
+            }else if(card.cardType == CardType.Trap){
+                flameImage.sprite = flames_trap;
+            }else{
+                cardStatesText.text = "ATK: " +card.Atk.ToString() + " / " + "DEF: " +card.Def.ToString();
+
+                if(card.Race != "" && card.Race != null){
+                    cardRaceText.text = card.Race;
+                }else{
+                    cardRaceText.text = card.cardType.ToString();
+                }
+                
+                switch(card.element){
+                    case Element.Fire:
+                        flameImage.sprite = flames[0];
+                        break;
+                    case Element.Water:
+                        flameImage.sprite = flames[1];
+                        break;
+                    case Element.Earth:
+                        flameImage.sprite = flames[2];
+                        break;
+                    case Element.Air:
+                        flameImage.sprite = flames[3];
+                        break;
+                    case Element.Light:
+                        flameImage.sprite = flames[4];
+                        break;
+                    case Element.Dark:
+                        flameImage.sprite = flames[5];
+                        break;
+                    default:
+                        flameImage.sprite = flames[0];
+                        break;
+                }
             }
         }
     }

@@ -12,6 +12,10 @@ public class AllDeckSelectPrefab : MonoBehaviour
 
     public TextMeshProUGUI deckNameText;
 
+    public CanvasGroup popList;
+
+    public DeckDisplayManager DDM;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,6 +35,7 @@ public class AllDeckSelectPrefab : MonoBehaviour
         DeckEditorManager.isEdit = true;
         DeckEditorManager.EditNumber = thisNum;
 
-        SceneManager.LoadScene("DeckBuild");
+        //SceneManager.LoadScene("DeckBuild");
+        DDM.popUpCardMenuIn(thisDeck, thisNum);
     }
 }
