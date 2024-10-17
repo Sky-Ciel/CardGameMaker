@@ -64,7 +64,7 @@ public class DeckDropArea : MonoBehaviour, IDropHandler
         costDistributionGraph.UpdateCostDistribution(deckCards);
     }
 
-    void UpdateDeck(){
+    public void UpdateDeck(){
         deck.deckCards = deckCards;
         deck.deckName = deckNameInput.text;
     }
