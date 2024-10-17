@@ -131,7 +131,9 @@ public class DeckDisplayManager : MonoBehaviour
         popCardMenuFade_can.alpha = 0f;
 
         popCardMenuFade_can.DOFade(1f, 0.5f);
-        popCardMenu_can.DOFade(1f, 0.5f);
+        popCardMenu_can.DOFade(1f, 0.5f).OnComplete(() => {
+            SetDeckListView();
+        });
 
         SelectingDeck = d;
         SelectingNum = n;
@@ -142,7 +144,6 @@ public class DeckDisplayManager : MonoBehaviour
 
         popCardMenu_can.alpha = 1f;
         popCardMenuFade_can.alpha = 1f;
-
 
         popCardMenu_can.DOFade(0f, 0.5f);
         popCardMenuFade_can.DOFade(0f, 0.5f).OnComplete(() => {
@@ -227,8 +228,6 @@ public class DeckDisplayManager : MonoBehaviour
 
     // デッキリスト
     public void popUpDeckList(){
-        SetDeckListView();
-        
         popDeckList.SetActive(true);
         popDeckListFade.SetActive(true);
 
