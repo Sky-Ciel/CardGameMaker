@@ -16,13 +16,16 @@ public class AllDeckSelectPrefab : MonoBehaviour
 
     public DeckDisplayManager DDM;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public CardDisplayScript c;
 
     // Update is called once per frame
+    
+    void Start(){
+        if(thisDeck.KeyCard != null){
+            c.SetCardInfo(thisDeck.KeyCard);
+        }
+    }
+
     void Update()
     {
         deckNameText.text = thisDeck.deckName;

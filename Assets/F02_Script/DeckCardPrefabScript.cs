@@ -36,6 +36,11 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
     [Header("------ ポップアップ情報ウィンドウ ------")]
     public GameObject popupPrefab;  // ポップアップのプレハブ
     private GameObject currentPopup;  // 現在表示中のポップアップ
+
+    public Image buttonImage; // ボタンのイメージ
+    public Sprite[] states; // 状態に応じた画像を格納する配列
+    private bool isStateA = true; // 状態管理用のフラグ
+
     [Header("------ アニメーションセッティング ------")]
     [SerializeField] private float popupAnimationDuration = 0.5f;
     [SerializeField] private Ease popupEaseType = Ease.OutBack;
@@ -46,6 +51,16 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
     private void Start()
     {
         canvasGroup = GetComponent<CanvasGroup>();
+    }
+
+    void Update(){
+        if(deckDropArea!=null){
+            if(deckDropArea.deck.KeyCard == card){ //キーカード設定中
+                isStateA = true;
+            }else{
+                isStateA = false;
+            }
+        }
     }
 
     // カード情報を設定する
@@ -215,6 +230,33 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
         }
     }
 
+    public void SetKeyCard()
+    {
+        // 状態を切り替え
+        isStateA = !isStateA;
+
+        if(isStateA){ //キーカード設定中
+            deckDropArea.deck.KeyCard = card;
+            buttonImage.sprite = states[1];
+        }else{
+            deckDropArea.deck.KeyCard = null;
+            buttonImage.sprite = states[0];
+        }
+
+        // コイントスのようにアニメーション
+        AnimateButton();
+    }
+
+    private void AnimateButton()
+    {
+        Transform transform = buttonImage.gameObject.transform;
+        // アニメーションの開始
+        transform.DOKill(); // 既存のアニメーションを停止
+        transform.DORotate(new Vector3(0, 0, 360), 0.5f, RotateMode.FastBeyond360)
+                 .SetEase(Ease.OutBounce)
+                 .OnComplete(() => transform.DORotate(Vector3.zero, 0.2f));
+    }
+
     private void SetPopupInfo(GameObject popup)
     {
         // ポップアップ内の各要素を取得
@@ -225,6 +267,16 @@ public class DeckCardPrefabScript : MonoBehaviour, IBeginDragHandler, IDragHandl
         TextMeshProUGUI atkDefText = popup.transform.Find("AtkDefText").GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI effectText = popup.transform.Find("EffectText").GetComponent<TextMeshProUGUI>();
         CardInfoPopUpScript infoCard = popup.transform.Find("InfoCard").GetComponent<CardInfoPopUpScript>();
+
+        buttonImage = popup.transform.Find("KeyCard").GetComponent<Image>();
+        Button keyCardButton = popup.transform.Find("KeyCard").GetComponent<Button>();
+        keyCardButton.onClick.AddListener(SetKeyCard);
+
+        if(isStateA){ //キーカード設定中
+            buttonImage.sprite = states[1];
+        }else{
+            buttonImage.sprite = states[0];
+        }
 
         infoCard.SetCardInfo(card);
         Button closeButton = popup.transform.Find("CloseButton").GetComponent<Button>();

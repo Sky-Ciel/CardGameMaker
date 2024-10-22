@@ -28,12 +28,13 @@ public class CardDisplayScript : MonoBehaviour
 
     void Update()
     {
-        SetCardInfo(card);
+        //SetCardInfo(card);
     }
 
     // カード情報を設定する
     public void SetCardInfo(Card cardData)
     {
+        cardBack.SetActive(true);
         if(cardData == null){
             cardBack.SetActive(true);
         }else{

@@ -76,7 +76,7 @@ public class DeckEditorManager : MonoBehaviour
 
             // CardPrefabScript にカード情報をセットする
             CardPrefabScript cardScript = cardObject.GetComponent<CardPrefabScript>();
-            cardScript.SetCardInfo(card);
+            cardScript.SetCardInfo(card, DDA);
         }
 
         popupInfo.SetActive(false);

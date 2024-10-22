@@ -152,6 +152,7 @@ MonoBehaviour:
   deckNameText: {fileID: 2343364003577439775}
   popList: {fileID: 0}
   DDM: {fileID: 0}
+  c: {fileID: 7205934988903601797}
 --- !u!1 &9040748088531953512
 GameObject:
   m_ObjectHideFlags: 0
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e2a55d77047249f9a86b114a02896ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 11400000, guid: 6cd2787ae9ea0471396801984e46cf58, type: 2}
+  card: {fileID: 0}
   cardImage: {fileID: 4834205017305053731}
   cardNameText: {fileID: 6965537809252499605}
   cardTextText: {fileID: 4146975319968065302}

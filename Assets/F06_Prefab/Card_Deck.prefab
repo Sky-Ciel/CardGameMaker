@@ -142,6 +142,10 @@ MonoBehaviour:
   flames_magi: {fileID: 21300000, guid: c15141635bd4b41f78ddfdbca7d0a2ca, type: 3}
   flames_trap: {fileID: 21300000, guid: b15c681aec4a34fe4841c7224bbfe31a, type: 3}
   popupPrefab: {fileID: 398222569236881747, guid: 636c59cda25384215bdba21e48b04b77, type: 3}
+  buttonImage: {fileID: 0}
+  states:
+  - {fileID: 21300000, guid: 9e13ea13eecf341618c4ef19b84a2a02, type: 3}
+  - {fileID: 21300000, guid: 4b16901f647294677bb988f785f3d1b5, type: 3}
   popupAnimationDuration: 0.5
   popupEaseType: 27
   fade: {fileID: 3651799785756305750, guid: f1ec0ccf7452e437a8e99cc4c16bdd65, type: 3}
